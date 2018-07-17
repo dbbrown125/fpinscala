@@ -49,6 +49,13 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
+  def sum3(ns: List[Int]): Int =
+    foldLeft(ns, 0)((x, y) => x + y)
+
+  def product3(ns: List[Double]): Double =
+    foldLeft(ns, 1.0)((x, y) => x * y)
+
+  def flLength[A](l: List[A]): Int = foldLeft(l, 0: Int)((x,y) => x + 1)
 
   def tail[A](l: List[A]): List[A] =
     l match {
@@ -83,9 +90,17 @@ object List { // `List` companion object. Contains functions for creating and wo
       case Cons(h, t) => Cons(h, init(t))
     }
 
-  def length[A](l: List[A]): Int = ???
+  def length[A](l: List[A]): Int = foldRight(l, 0: Int)((x, y) => 1 + y)
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  @annotation.tailrec
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = {
+    l match {
+      case Nil => z
+      case Cons(h, xs) => foldLeft(xs, f(z, h))(f)
+    }
+  }
+
+  def reverse[A](as: List[A]): List[A] = foldLeft(as, List[A]())((b, a) => Cons(a, b))
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 }
